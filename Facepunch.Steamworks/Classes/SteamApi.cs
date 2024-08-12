@@ -13,7 +13,6 @@ namespace Steamworks
 		internal static class Native
 		{
 			[DllImport( Platform.LibraryName, EntryPoint = "SteamInternal_SteamAPI_Init", CallingConvention = CallingConvention.Cdecl )]
-			[return: MarshalAs( UnmanagedType.I1 )]
 			public static extern SteamAPIInitResult SteamAPI_Init(IntPtr pszInternalCheckInterfaceVersions, IntPtr pOutErrMsg);
 
 			[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_Shutdown", CallingConvention = CallingConvention.Cdecl )]
