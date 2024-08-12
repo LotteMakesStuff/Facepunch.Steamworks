@@ -1,0 +1,11 @@
+{
+  "name": "com.lms.facepunch.steamworks",
+  "displayName": "Facepunch.Steamworks - Hosted by Lotte",
+  "version": "1.60.5",
+  "unity": "2021.3",
+  "description": "\"Another fucking c# Steamworks implementation\"\nUpdated to support Steamworks 1.60 and Steam Timeline",
+  "keywords": [
+    "steamworks",
+    "steam"
+  ]
+}
