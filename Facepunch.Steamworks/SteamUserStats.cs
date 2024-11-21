@@ -135,9 +135,10 @@ namespace Steamworks
 		/// Only after the resulting callback comes back can you start calling the rest of the stats 
 		/// and achievement functions for the current user.
 		/// </summary>
+		[Obsolete("Removed in Steamworks 1.61")]
 		public static bool RequestCurrentStats()
 		{
-			return Internal.RequestCurrentStats();
+			return true;
 		}
 
 		/// <summary>
