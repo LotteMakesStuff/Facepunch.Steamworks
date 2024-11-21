@@ -2,23 +2,33 @@
 Facepunch.Steamworks is probably the best steam wrapper to work with in C# - unfortunatly its not recieveing updates anymore in the mainline repository (the last official release was in 2020!). over the last 4 years ive regularly had to download the dang git repository, remember how it all works and build an updated version just before shipping some Unity game to steam... This time i figured WHY NOT COMMIT A FORK. Maybe ill save you an hours work.
 
 ## So whats in this fork?
-✔ Built against [Steamworks 1.60](https://partner.steamgames.com/downloads/list)
+✔ Built against [Steamworks 1.61](https://partner.steamgames.com/downloads/list)
 ✔ Exposes all the new [Steam Timeline](https://partner.steamgames.com/doc/features/timeline) stuff needed to have full [Game Recording](https://store.steampowered.com/gamerecording) support in a game
+✔ Added support for Dynamic Cloud Sync - https://steamcommunity.com/groups/steamworks/announcements/detail/3142949576401813670
 ✔ Adds a Unity package that can be easily installed with Unity Package Manager, with prebuilt 64bit .Net Standard 2.1 assemblies for Windows, OSX and Steamdeck
 
 ## CHANGELOG
+### 1.61.0
+- Updated Steam Timeline implementation to support the new API design shipped in Steamworks 1.61
+    - ```SetTimelineStateDescription``` has been replaced with ```SetTimelineTooltip```
+    - ```ClearTimelineStateDescription``` has been replaced with ```ClearTimelineTooltip```
+    - ```AddTimelineEvent``` has been replaced with ```TimelineEvents.AddInstantEvent``` and ```TimelineEvents.AddRangedEvent```
+- Added support beta branch APIs in SteamApps
+- Added``` DismissGamepadTextInput``` to SteamUtils
+- Added ```BeginFileWriteBatch``` & ```EndFileWriteBatch``` in SteamRemoteStorage
+- Added support for Dynamic Cloud Sync in SteamRemoteStorage
+- Removed ```RequestCurrentStats``` from SteamUserStats as it is now obsolete 
 ### 1.60.5
-Fixed linux editor issues
+- Fixed linux editor issues
 ### 1.60.3
-Removed old steamworks DLL that was in the root folder for some reason
+- Removed old steamworks DLL that was in the root folder for some reason
 ### 1.60.2
-Rebuilt DLLS for all platforms
+- Rebuilt DLLS for all platforms
 ### 1.60.1
-Fixed issues with ```SteamClient.Init()``` binding
-Exposed an Achievements's hidden state via ```achievement.IsHidden```
-
+- Fixed issues with ```SteamClient.Init()``` binding
+- Exposed an Achievements's hidden state via ```achievement.IsHidden```
 ### 1.60.0
-Added bindning for Steam Timeline, accessable via ```Steamworks.SteamTimeline``` 
+- Added bindning for Steam Timeline, accessable via ```Steamworks.SteamTimeline``` 
 
 ---
 
