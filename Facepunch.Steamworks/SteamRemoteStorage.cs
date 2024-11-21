@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Steamworks.Data;
+using Steamworks.Structs;
 
 namespace Steamworks
 {
@@ -18,10 +19,16 @@ namespace Steamworks
 		{
 			SetInterface( server, new ISteamRemoteStorage( server ) );
 			if ( Interface.Self == IntPtr.Zero ) return false;
+			
+			InstallEvents();
 
 			return true;
 		}
 
+		internal void InstallEvents()
+		{
+			Dispatch.Install<RemoteStorageLocalFileChange_t>( x => OnRemoteStorageLocalFileChange?.Invoke() );
+		}
 
 		/// <summary>
 		/// Creates a new file, writes the bytes to the file, and then closes the file.
@@ -37,6 +44,24 @@ namespace Steamworks
 				return Internal.FileWrite( filename, (IntPtr) ptr, data.Length );
 			}
 		}
+
+		/// <summary>
+		/// Use this along with EndFileWriteBatch to wrap a set of local file writes/deletes that should be considered part of one single state change. For example, if saving game progress requires updating both savegame1.dat and maxprogress.dat, wrap those operations with calls to BeginFileWriteBatch and EndFileWriteBatch.
+		///
+		/// These functions provide a hint to Steam which will help it manage the app's Cloud files. Using these functions is optional, however it will provide better reliability.
+		///
+		/// Note that the functions may be used whether the writes are done using the ISteamRemoteStorage API, or done directly to local disk (where AutoCloud is used).
+		/// </summary>
+		/// <returns>Returns true if a new write batch has been started, or false if there was a batch already in progress</returns>
+		public static bool BeginFileWriteBatch()
+			=> Internal.BeginFileWriteBatch();
+		
+		/// <summary>
+		/// Use this along with BeginFileWriteBatch
+		/// </summary>
+		/// <returns>Returns true if the write batch was ended, false if there was no batch already in progress.</returns>
+		public static bool EndFileWriteBatch()
+			=> Internal.EndFileWriteBatch();
 
 		/// <summary>
 		/// Opens a binary file, reads the contents of the file into a byte array, and then closes the file.
@@ -184,5 +209,48 @@ namespace Steamworks
 			}
 		}
 
+		/// <summary>
+		/// If a Steam app is flagged for supporting dynamic Steam Cloud sync, and a sync occurs, this callback will be posted to the app if any local files changed.
+		/// </summary>
+		public static event Action OnRemoteStorageLocalFileChange;
+
+		/// <summary>
+		/// When your application receives a RemoteStorageLocalFileChange, use this method to get the number of changes (file updates and file deletes) that have been made. You can then iterate the changes using GetLocalFileChange.
+		///
+		/// Note: only applies to applications flagged as supporting dynamic Steam Cloud sync.
+		/// </summary>
+		/// <returns></returns>
+		public static int GetLocalFileChangeCount()
+		{
+			return Internal.GetLocalFileChangeCount();
+		}
+
+		/// <summary>
+		/// After calling GetLocalFileChangeCount, use this method to iterate over the changes. The changes described have already been made to local files. Your application should take appropriate action to reload state from disk, and possibly notify the user.
+		///
+		/// For example: The local system had been suspended, during which time the user played elsewhere and uploaded changes to the Steam Cloud. On resume, Steam downloads those changes to the local system before resuming the application. The application receives an RemoteStorageLocalFileChange, and uses GetLocalFileChangeCount and GetLocalFileChange to iterate those changes. Depending on the application structure and the nature of the changes, the application could:
+		///  - Re-load game progress to resume at exactly the point where the user was when they exited the game on the other device
+		///  - Notify the user of any synchronized changes that don't require reloading
+		///  - etc
+		/// 
+		/// Note: only applies to applications flagged as supporting dynamic Steam Cloud sync.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public static FileChange GetLocalFileChange( int index )
+		{
+			RemoteStorageLocalFileChange remoteStorageLocalFileChange = RemoteStorageLocalFileChange.Invalid;
+			RemoteStorageFilePathType remoteStorageFilePathType = RemoteStorageFilePathType.Invalid;
+			string path = Internal.GetLocalFileChange( index, ref remoteStorageLocalFileChange, ref remoteStorageFilePathType );
+
+			return new FileChange()
+			{
+				Filename = path,
+				Updated = remoteStorageLocalFileChange == RemoteStorageLocalFileChange.FileUpdated,
+				Deleted = remoteStorageLocalFileChange == RemoteStorageLocalFileChange.FileDeleted,
+				AbsolutePath = remoteStorageFilePathType == RemoteStorageFilePathType.Absolute,
+				CloudPath = remoteStorageFilePathType == RemoteStorageFilePathType.APIFilename
+			};
+		}
 	}
 }
