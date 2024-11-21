@@ -300,5 +300,13 @@ namespace Steamworks
 		//{
 		//	Internal.ShowFloatingGamepadTextInput( mode, left, top, width, height );
 		//}
+		
+		/// <summary>
+		/// Dismisses the full-screen text input dialog.
+		/// </summary>
+		public static bool DismissGamepadTextInput( )
+		{
+			return Internal.DismissGamepadTextInput();
+		}
 	}
 }
