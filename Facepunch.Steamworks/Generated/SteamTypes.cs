@@ -134,20 +134,25 @@ namespace Steamworks.Data
 		public int CompareTo( HSteamUser other ) => Value.CompareTo( other.Value );
 	}
 	
-	internal unsafe struct SteamErrMsg //: IEquatable<SteamErrMsg>, IComparable<SteamErrMsg>
+	internal unsafe struct SteamErrMsg : IEquatable<SteamErrMsg>, IComparable<SteamErrMsg>
 	{
 		// Name: SteamErrMsg, Type: char [1024]
 		public fixed char Value[1024];
 		
-		// public static implicit operator SteamErrMsg( char [] value ) => new SteamErrMsg(){ Value = value };
-		// public static implicit operator char []( SteamErrMsg value ) => value.Value;
-		// public override string ToString() => Value.ToString();
-		// public override int GetHashCode() => Value.GetHashCode();
-		// public override bool Equals( object p ) => this.Equals( (SteamErrMsg) p );
-		// public bool Equals( SteamErrMsg p ) => p.Value == Value;
-		// public static bool operator ==( SteamErrMsg a, SteamErrMsg b ) => a.Equals( b );
-		// public static bool operator !=( SteamErrMsg a, SteamErrMsg b ) => !a.Equals( b );
-		// public int CompareTo( SteamErrMsg other ) => Value.CompareTo( other.Value );
+		public override string ToString()
+		{
+			fixed (char* p = Value)
+			{
+				return new string( p );
+			}  
+		}
+
+		public override int GetHashCode() => ToString().GetHashCode();
+		public override bool Equals( object p ) => this.Equals( (SteamErrMsg) p );
+		public bool Equals( SteamErrMsg p ) => p.ToString() == ToString();
+		public static bool operator ==( SteamErrMsg a, SteamErrMsg b ) => a.Equals( b );
+		public static bool operator !=( SteamErrMsg a, SteamErrMsg b ) => !a.Equals( b );
+		public int CompareTo( SteamErrMsg other ) => ToString().CompareTo( other.ToString() );
 	}
 	
 	internal struct FriendsGroupID_t : IEquatable<FriendsGroupID_t>, IComparable<FriendsGroupID_t>
@@ -612,6 +617,22 @@ namespace Steamworks.Data
 		public static bool operator ==( SteamInventoryUpdateHandle_t a, SteamInventoryUpdateHandle_t b ) => a.Equals( b );
 		public static bool operator !=( SteamInventoryUpdateHandle_t a, SteamInventoryUpdateHandle_t b ) => !a.Equals( b );
 		public int CompareTo( SteamInventoryUpdateHandle_t other ) => Value.CompareTo( other.Value );
+	}
+	
+	internal struct TimelineEventHandle_t : IEquatable<TimelineEventHandle_t>, IComparable<TimelineEventHandle_t>
+	{
+		// Name: TimelineEventHandle_t, Type: unsigned long long
+		public ulong Value;
+		
+		public static implicit operator TimelineEventHandle_t( ulong value ) => new TimelineEventHandle_t(){ Value = value };
+		public static implicit operator ulong( TimelineEventHandle_t value ) => value.Value;
+		public override string ToString() => Value.ToString();
+		public override int GetHashCode() => Value.GetHashCode();
+		public override bool Equals( object p ) => this.Equals( (TimelineEventHandle_t) p );
+		public bool Equals( TimelineEventHandle_t p ) => p.Value == Value;
+		public static bool operator ==( TimelineEventHandle_t a, TimelineEventHandle_t b ) => a.Equals( b );
+		public static bool operator !=( TimelineEventHandle_t a, TimelineEventHandle_t b ) => !a.Equals( b );
+		public int CompareTo( TimelineEventHandle_t other ) => Value.CompareTo( other.Value );
 	}
 	
 	internal struct RemotePlaySessionID_t : IEquatable<RemotePlaySessionID_t>, IComparable<RemotePlaySessionID_t>
