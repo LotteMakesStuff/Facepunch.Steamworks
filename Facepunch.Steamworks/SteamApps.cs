@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Steamworks.Data;
+using Steamworks.Structs;
 
 namespace Steamworks
 {
@@ -101,7 +102,7 @@ namespace Steamworks
 			if ( appid == 0 )
 				appid = SteamClient.AppId;
 
-			return Epoch.ToDateTime(Internal.GetEarliestPurchaseUnixTime(appid.Value ) );
+			return Epoch.ToDateTime( Internal.GetEarliestPurchaseUnixTime( appid.Value ) );
 		}
 
 		/// <summary>
@@ -116,7 +117,7 @@ namespace Steamworks
 		/// </summary>
 		public static IEnumerable<DlcInformation> DlcInformation()
 		{
-			var appid = default( AppId );
+			var appid = default(AppId);
 			var available = false;
 
 			for ( int i = 0; i < Internal.GetDLCCount(); i++ )
@@ -124,12 +125,7 @@ namespace Steamworks
 				if ( !Internal.BGetDLCDataByIndex( i, ref appid, ref available, out var strVal ) )
 					continue;
 
-				yield return new DlcInformation
-				{
-					AppId = appid.Value,
-					Name = strVal,
-					Available = available
-				};
+				yield return new DlcInformation { AppId = appid.Value, Name = strVal, Available = available };
 			}
 		}
 
@@ -157,6 +153,117 @@ namespace Steamworks
 
 				return strVal;
 			}
+		}
+
+		/// <summary>
+		/// Gets the total number of known app branches, including the default "public" branch and private branches.
+		/// </summary>
+		public static int GetTotalBranchCount
+		{
+			get
+			{
+				int availableBranches = 0, privateBranches = 0;
+				return Internal.GetNumBetas( ref availableBranches, ref privateBranches );
+			}
+		}
+		
+		/// <summary>
+		/// Gets the total number of available app branches (not including the default public branch).
+		/// </summary>
+		public static int GetTotalAvailableBranchCount
+		{
+			get
+			{
+				int availableBranches = 0, privateBranches = 0;
+				Internal.GetNumBetas( ref availableBranches, ref privateBranches );
+				return availableBranches;
+			}
+		}
+		
+		/// <summary>
+		/// Gets the total number of private app branches. Private branches are unlocked by password and may not be available.
+		/// </summary>
+		public static int GetTotalPrivateBranchCount
+		{
+			get
+			{
+				int availableBranches = 0, privateBranches = 0;
+				Internal.GetNumBetas( ref availableBranches, ref privateBranches );
+				return privateBranches;
+			}
+		}
+
+		/// <summary>
+		/// Gets all steam branches, including unavalible private branches and the defualt public branch.
+		/// </summary>
+		public static AppBranch[] Branches
+		{
+			get
+			{
+				int count = GetTotalBranchCount;
+				AppBranch[] branches = new AppBranch[count];
+				for ( int i = 0; i < count; i++ )
+				{
+					uint flags = 0;
+					uint buildID = 0;
+					Internal.GetBetaInfo( i, ref flags, ref buildID, out var name, out var description );
+					branches[i] = new AppBranch( i, flags, buildID, name, description );
+				}
+				return branches;
+			}
+		}
+		
+		/// <summary>
+		/// Gets all available steam branches (not including the default public branch).
+		/// </summary>
+		public static AppBranch[] AvailableBranches
+		{
+			get
+			{
+				int totalCount = GetTotalBranchCount;
+				int count = GetTotalAvailableBranchCount;
+				AppBranch[] branches = new AppBranch[count];
+				int nextBranch = 0;
+				for ( int i = 1; i < totalCount; i++ )
+				{
+					uint flags = 0;
+					uint buildID = 0;
+					Internal.GetBetaInfo( i, ref flags, ref buildID, out var name, out var description );
+					var branch = new AppBranch( i, flags, buildID, name, description );
+					if ( branch.IsBranchAvailable )
+					{
+						branches[nextBranch] = branch;
+						nextBranch++;
+					} 
+				}
+				return branches;
+			}
+		}
+		
+		/// <summary>
+		/// Gets the default public branch.
+		/// </summary>
+		public static AppBranch DefaultPublicBranch
+		{
+			get
+			{
+				uint flags = 0;
+				uint buildID = 0;
+				Internal.GetBetaInfo( 0, ref flags, ref buildID, out var name, out var description );
+				var branch = new AppBranch( 0, flags, buildID, name, description );
+				
+				return branch;
+			}
+		}
+
+		/// <summary>
+		/// Select a beta branch for this app as active. This might need the game to restart so Steam can update its' content that branch.
+		/// </summary>
+		/// <param name="branchName">Beta name the game wants to switch to.</param>
+		/// <returns></returns>
+		public static bool SetActiveBranch(string branchName)
+		{
+			return Internal.SetActiveBeta( branchName );
 		}
 
 		/// <summary>
