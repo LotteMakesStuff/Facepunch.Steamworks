@@ -7,7 +7,7 @@ PluginImporter:
   executionOrder: {}
   defineConstraints: []
   isPreloaded: 0
-  isOverridable: 0
+  isOverridable: 1
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
@@ -17,13 +17,8 @@ PluginImporter:
       enabled: 0
       settings:
         Exclude Editor: 0
-        Exclude GameCoreScarlett: 1
-        Exclude GameCoreXboxOne: 1
-        Exclude Linux64: 1
+        Exclude Linux64: 0
         Exclude OSXUniversal: 1
-        Exclude PS4: 1
-        Exclude PS5: 1
-        Exclude Switch: 1
         Exclude Win: 1
         Exclude Win64: 1
   - first:
@@ -40,23 +35,11 @@ PluginImporter:
         DefaultValueInitialized: true
         OS: Linux
   - first:
-      Facebook: Win
-    second:
-      enabled: 0
-      settings:
-        CPU: None
-  - first:
-      Facebook: Win64
-    second:
-      enabled: 0
-      settings:
-        CPU: None
-  - first:
       Standalone: Linux64
     second:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
   - first:
       Standalone: OSXUniversal
     second:

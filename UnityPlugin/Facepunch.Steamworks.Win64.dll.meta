@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b3ad7ccc15f481747842885a21b7b4ab
+guid: 5fafd7ef181364ad2a0575c32714cba6
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -7,7 +7,7 @@ PluginImporter:
   executionOrder: {}
   defineConstraints: []
   isPreloaded: 0
-  isOverridable: 0
+  isOverridable: 1
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
@@ -17,15 +17,8 @@ PluginImporter:
       enabled: 0
       settings:
         Exclude Editor: 0
-        Exclude GameCoreScarlett: 1
-        Exclude GameCoreXboxOne: 1
-        Exclude Linux: 1
         Exclude Linux64: 1
-        Exclude LinuxUniversal: 1
         Exclude OSXUniversal: 1
-        Exclude PS4: 1
-        Exclude PS5: 1
-        Exclude Switch: 1
         Exclude Win: 1
         Exclude Win64: 0
   - first:
@@ -42,46 +35,7 @@ PluginImporter:
         DefaultValueInitialized: true
         OS: Windows
   - first:
-      Facebook: Win
-    second:
-      enabled: 0
-      settings:
-        CPU: None
-  - first:
-      Facebook: Win64
-    second:
-      enabled: 0
-      settings:
-        CPU: AnyCPU
-  - first:
-      GameCoreScarlett: GameCoreScarlett
-    second:
-      enabled: 0
-      settings: {}
-  - first:
-      GameCoreXboxOne: GameCoreXboxOne
-    second:
-      enabled: 0
-      settings: {}
-  - first:
-      Nintendo Switch: Switch
-    second:
-      enabled: 0
-      settings: {}
-  - first:
-      Standalone: Linux
-    second:
-      enabled: 0
-      settings:
-        CPU: None
-  - first:
       Standalone: Linux64
-    second:
-      enabled: 1
-      settings:
-        CPU: None
-  - first:
-      Standalone: LinuxUniversal
     second:
       enabled: 0
       settings:
@@ -89,13 +43,13 @@ PluginImporter:
   - first:
       Standalone: OSXUniversal
     second:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: None
   - first:
       Standalone: Win
     second:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: None
   - first:
